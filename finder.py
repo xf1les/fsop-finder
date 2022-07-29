@@ -544,6 +544,8 @@ class LibIOFuncTaintTracker:
             self._mark_failed()
             return
         
+        bv = self.bv
+
         dominators = self.sink_block.dominators
         # Rearrange dominator block list returned from Binary ninja if it has a wrong order
         if dominators[0] != self.mlil_func.basic_blocks[0]: # Entry block should be the first one
@@ -702,6 +704,8 @@ class LibIOFuncTaintTracker:
     def report_result(self, indent=4):
         if not self.is_success():
             return
+
+        bv = self.bv
 
         ljust = indent * ' '
         
