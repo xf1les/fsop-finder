@@ -17,7 +17,11 @@ class FinderTask(BackgroundTaskThread):
         if bv.analysis_progress.state == AnalysisState.AnalyzeState:
             log_warn("[!] An active analysis is running now. Please wait until it is completed.")
             return
-        log_info(f"[*] glibc version: {get_glibc_version(bv)}")
+        glibc_ver = get_glibc_version(bv)
+        if glibc_ver != None:
+            log_info(f"[*] glibc version: {glibc_ver}")
+        else:
+            log_info(f"[!] Failed to detect glibc version!")
         
         G = LibIOVtableFuncCallGraph(bv)
         
@@ -27,7 +31,7 @@ class FinderTask(BackgroundTaskThread):
             log_error("[-] Failed to detect vtable!")
             return
         G.set_vtable_range(start, stop)
-        if get_glibc_version(bv) >= 2.24:
+        if glibc_ver == None or glibc_ver >= 2.24:
             log_info("[*] Looking for _IO_vtable_check function...")
             func = get_vtable_check_func(bv)
             if not func:
