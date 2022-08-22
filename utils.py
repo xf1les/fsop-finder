@@ -65,7 +65,7 @@ def get_vtable_check_func(bv):
     # Try _IO_vtable_check symbol
     funcs = bv.get_functions_by_name('_IO_vtable_check')
     if len(funcs) > 0:
-        address = funcs[0].start
+        return funcs[0].start
     else:
         # _IO_vtable_check references this string
         s = "Fatal error: glibc detected an invalid stdio handle"
@@ -75,6 +75,4 @@ def get_vtable_check_func(bv):
                 # Get code references to the string
                 refs = list(bv.get_code_refs(str_refs.start))
                 if len(refs) > 0:
-                    address = refs[0].function.start
-                    break
-    return address       
+                    return refs[0].function.start
