@@ -10,23 +10,6 @@ def debug_print(msg):
     if DEBUG:
         log_info(f'[DBG] {msg}')
 
-def get_ptr_data_at(bv, addr):
-    ''' Read a uintptr-size data from given pointer address
-    
-    Equivalent to this C statement:
-        return *(uintptr_t)(addr)
-    '''
-    # https://docs.python.org/3/library/struct.html#byte-order-size-and-alignment
-    if bv.arch.endianness == Endianness.LittleEndian:
-        fmt  = '<' # little-endian
-    else:
-        fmt  = '>' # big-endian
-    if bv.arch.address_size == 8:
-        fmt += 'Q' # 8-bytes
-    else:
-        fmt += 'L' # 4-bytes
-    return struct.unpack(fmt, bv.read(addr, bv.arch.address_size))[0]
-
 def get_glibc_version(bv):
     f = bv.get_functions_by_name('gnu_get_libc_version')[0]
     for instr in f.medium_level_il.instructions:
@@ -46,7 +29,7 @@ def get_glibc_version(bv):
 def _find_vtable_border(bv, addresses):
     last_nullptr = addresses[0]
     for addr in addresses:
-        ptr = get_ptr_data_at(bv, addr)
+        ptr = bv.read_pointer(addr)
         if ptr:
             f = bv.get_function_at(ptr)
             # Check if we encounter a libio function

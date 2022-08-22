@@ -5,7 +5,6 @@ from binaryninja import function, variable, mediumlevelil, lowlevelil
 
 from collections import deque
 
-from .utils import get_ptr_data_at
 from .utils import debug_print, DEBUG
 
 # The following functions won't be added to the callgraph while building in `G.build_graph()`
@@ -788,7 +787,7 @@ class LibIOVtableFuncCallGraph:
             return
         log_info(f"[*] Parsing vtable from {hex(self.vtable_start)} to {hex(self.vtable_stop)}...")
         for addr in range(self.vtable_start, self.vtable_stop, bv.arch.address_size):
-            faddr = get_ptr_data_at(bv, addr)
+            faddr = bv.read_pointer(addr)
             if not faddr:
                 continue
             f = bv.get_function_at(faddr)
