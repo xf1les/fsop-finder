@@ -17,6 +17,9 @@ class FinderTask(BackgroundTaskThread):
         if bv.analysis_progress.state == AnalysisState.AnalyzeState:
             log_warn("[!] An active analysis is running now. Please wait until it is completed.")
             return
+        if bv.arch.name not in ['x86', 'x86_64', 'thumb2', 'aarch64']:
+            log_warn(f"[!] Unsupported or untest platform '{bv.arch.name}', result may be incorrect. We currently support i386/x64/thumb2/aarch64.")
+
         glibc_ver = get_glibc_version(bv)
         if glibc_ver != None:
             log_info(f"[*] glibc version: {glibc_ver}")
