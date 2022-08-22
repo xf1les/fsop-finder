@@ -128,10 +128,10 @@ class LibIOFunc:
         
         self._var_visited = []
 
-    def add_caller(self, caller: LibIOFunc):
+    def add_caller(self, caller):
         self.callers[caller.func] = caller
 
-    def add_callee(self, callee: LibIOFunc):
+    def add_callee(self, callee):
         self.callees[callee.func] = callee
 
     def set_as_root(self):
