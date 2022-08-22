@@ -44,8 +44,8 @@ def _find_vtable_border(bv, addresses):
     return None
 
 def get_vtable_range(bv):
-    if get_glibc_version(bv) >= 2.24:
-        section = bv.get_section_by_name("__libc_IO_vtables")  
+    section = bv.get_section_by_name("__libc_IO_vtables")
+    if section:
         vtable_start, vtable_end =  section.start, section.end
     else:
         # Before GLIBC 2.24, there is no `__libc_IO_vtables` section. 
