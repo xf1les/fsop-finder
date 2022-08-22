@@ -172,8 +172,8 @@ class LibIOFunc:
             for instr in block:
                 if instr.operation != MediumLevelILOperation.MLIL_SET_VAR_SSA:
                     continue
-                # ARM/AARCH64: XOR `__pointer_chk_guard` directly
-                if bv.arch.name in ['thumb2', 'aarch64']:
+                # non-i386/x64: XOR `__pointer_chk_guard` directly
+                if bv.arch.name not in ['x86', 'x86_64']:
                     #  00069514  int64_t _IO_cookie_close(void* arg1)
                     #     [...]
                     #     1 @ 00069520  x1#1 = [__pointer_chk_guard].q @ mem#0
@@ -186,7 +186,7 @@ class LibIOFunc:
                             self.avoid_blocks.append(block)
                             break
                 # i386/x64: ROR then XOR `__pointer_chk_guard` pointed by `fs/gs` register
-                elif bv.arch.name in ['x86', 'x86_64']:
+                else:
                     reg_offset = 0x30   if bv.arch.name == 'x86_64' else 0x18
                     ror_bits = 0x11     if bv.arch.name == 'x86_64' else 0x9
                     reg_name = 'fsbase' if bv.arch.name == 'x86_64' else 'gsbase'
