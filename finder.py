@@ -790,8 +790,11 @@ class LibIOVtableFuncCallGraph:
             faddr = bv.read_pointer(addr)
             if not faddr:
                 continue
-            f = bv.get_function_at(faddr)
-            if f:
+            # Do not use `bv.get_functions_at()` here
+            #   In ARM, pointers in `__libc_IO_vtables` do not point to the beginning of IO functions
+            f = bv.get_functions_containing(faddr)
+            if len(f) > 0:
+                f = f[0]
                 if f not in self.nodes:
                     node = self.add_new_node(f, True)
                 else:
