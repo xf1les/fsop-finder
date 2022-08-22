@@ -454,20 +454,20 @@ class LibIOFuncTaintTracker:
                     MediumLevelILOperation.MLIL_CALL_UNTYPED_SSA, 
                     MediumLevelILOperation.MLIL_JUMP
                 ]:
-                if bv.arch.name == 'x86':
-                    # i386: Allow harmless __x86.get_pc_thunk.* calls
-                    #
-                    # 00147b0d  void* const __x86.get_pc_thunk.ax()
-                    #   0 @ 00147b0d  eax#1 = __return_addr#0
-                    #   1 @ 00147b10  return eax#1
-                    target = instr.instruction_operands[0]
-                    if target.operation == MediumLevelILOperation.MLIL_CONST_PTR:
-                        f = bv.get_function_at(target.constant).mlil
-                        if len(f) == 2: # Contains only two instructions
-                            vaule = f[0].instruction_operands[0].value
-                            if isinstance(vaule, variable.ReturnAddressRegisterValue):
-                                continue
-                return False
+                    if bv.arch.name == 'x86':
+                        # i386: Allow harmless __x86.get_pc_thunk.* calls
+                        #
+                        # 00147b0d  void* const __x86.get_pc_thunk.ax()
+                        #   0 @ 00147b0d  eax#1 = __return_addr#0
+                        #   1 @ 00147b10  return eax#1
+                        target = instr.instruction_operands[0]
+                        if target.operation == MediumLevelILOperation.MLIL_CONST_PTR:
+                            f = bv.get_function_at(target.constant).mlil
+                            if len(f) == 2: # Contains only two instructions
+                                vaule = f[0].instruction_operands[0].value
+                                if isinstance(vaule, variable.ReturnAddressRegisterValue):
+                                    continue
+                    return False
         return True
         
     def _visit_subpath(self, src, dst, subpaths, Q = deque()):
